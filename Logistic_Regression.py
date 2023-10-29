@@ -36,10 +36,10 @@ def main():
     print(f"F1-score: {f1:.3f}")
 
     # Save the model and test data for future analysis using Pickle
-    with open('logistic_regression_model.pkl', 'wb') as file:
+    with open('pickle/logistic_regression_model.pkl', 'wb') as file:
         pickle.dump(model, file)
 
-    with open('test_data_logistic_regression.pkl', 'wb') as file:
+    with open('pickle/test_data_logistic_regression.pkl', 'wb') as file:
         pickle.dump((X_test, y_test), file)
 
 

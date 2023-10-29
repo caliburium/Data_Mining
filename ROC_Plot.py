@@ -1,6 +1,6 @@
 import pickle
 import matplotlib.pyplot as plt
-from sklearn.metrics import roc_curve, auc, roc_auc_score, accuracy_score, precision_score, recall_score, f1_score
+from sklearn.metrics import roc_curve, auc, accuracy_score, precision_score, recall_score, f1_score
 
 
 def main():

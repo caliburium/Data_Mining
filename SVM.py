@@ -36,10 +36,10 @@ def main():
     print(f"F1-score: {f1:.3f}")
 
     # Save the model and test data using Pickle
-    with open('svm_model.pkl', 'wb') as model_file:
+    with open('pickle/svm_model.pkl', 'wb') as model_file:
         pickle.dump(model, model_file)
 
-    with open('test_data_svm.pkl', 'wb') as test_data_file:
+    with open('pickle/test_data_svm.pkl', 'wb') as test_data_file:
         pickle.dump((X_test, y_test), test_data_file)
 
 
