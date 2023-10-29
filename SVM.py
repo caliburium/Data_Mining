@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
-from cuml import DecisionTreeClassifier  # Import GPU-accelerated DecisionTreeClassifier from cuml
+from cuml import SVC  # Import GPU-accelerated SVM from cuml
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 import pickle
 
@@ -22,12 +22,12 @@ def main():
     y_train = np.array(y_train)
     y_test = np.array(y_test)
 
-    # Train the GPU-accelerated Decision Tree classifier
-    model = DecisionTreeClassifier()
+    # Train the GPU-accelerated SVM classifier
+    model = SVC(kernel='linear')
     model.fit(X_train, y_train)
 
     # Save the model using pickle
-    with open('decision_tree_model.pkl', 'wb') as model_file:
+    with open('svm_model.pkl', 'wb') as model_file:
         pickle.dump(model, model_file)
 
     # Save the test data for later use
