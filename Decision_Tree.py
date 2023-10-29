@@ -1,6 +1,4 @@
-import wandb
 import numpy as np
-
 import torchvision
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
@@ -9,9 +7,6 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 
 
 def main():
-    # W&B 초기화
-    wandb.init(project="Datamining_Midterm", name='DecisionTree')
-
     # 데이터 전처리 및 로딩
     transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
@@ -63,10 +58,6 @@ def main():
     print('Test Precision: %.3f' % precision)
     print('Test Recall: %.3f' % recall)
     print('Test F1-Score: %.3f' % f1)
-
-    # W&B에 결과 기록
-    wandb.log({'test/acc': accuracy, 'test/precision': precision, 'test/recall': recall, 'test/f1': f1})
-    wandb.finish()
 
 
 if __name__ == '__main__':
