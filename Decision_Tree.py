@@ -7,61 +7,67 @@ from torch.utils.data import DataLoader
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
-# W&B 초기화
-wandb.init(project="Datamining_Midterm", name='DecisionTree')
 
-# 데이터 전처리 및 로딩
-transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+def main():
+    # W&B 초기화
+    wandb.init(project="Datamining_Midterm", name='DecisionTree')
 
-batch_size = 32
-trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
-trainloader = DataLoader(trainset, batch_size=batch_size, shuffle=True, num_workers=2)
-testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
-testloader = DataLoader(testset, batch_size=batch_size, shuffle=False, num_workers=2)
+    # 데이터 전처리 및 로딩
+    transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
-# Decision Tree 모델 초기화
-model = DecisionTreeClassifier()
+    batch_size = 32
+    trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
+    trainloader = DataLoader(trainset, batch_size=batch_size, shuffle=True, num_workers=2)
+    testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
+    testloader = DataLoader(testset, batch_size=batch_size, shuffle=False, num_workers=2)
 
-# 데이터 및 레이블 초기화
-train_data = []
-train_labels = []
+    # Decision Tree 모델 초기화
+    model = DecisionTreeClassifier()
 
-# 학습 데이터 로딩
-for data in trainloader:
-    inputs, labels = data
-    inputs = inputs.view(inputs.size(0), -1).numpy()
-    train_data.extend(inputs)
-    train_labels.extend(labels.numpy())
+    # 데이터 및 레이블 초기화
+    train_data = []
+    train_labels = []
 
-# 모델 학습
-model.fit(train_data, train_labels)
+    # 학습 데이터 로딩
+    for data in trainloader:
+        inputs, labels = data
+        inputs = inputs.view(inputs.size(0), -1).numpy()
+        train_data.extend(inputs)
+        train_labels.extend(labels.numpy())
 
-# 정확도, 정밀도, 재현율, F1 점수 계산
-correct = 0
-total = 0
-predicted_labels = []
-true_labels = []
+    # 모델 학습
+    model.fit(train_data, train_labels)
 
-for data in testloader:
-    images, labels = data
-    images = images.view(images.size(0), -1).numpy()
-    predicted = model.predict(images)
-    total += labels.size(0)
-    correct += np.sum(predicted == labels.numpy())
-    predicted_labels.extend(predicted)
-    true_labels.extend(labels.numpy())
+    # 정확도, 정밀도, 재현율, F1 점수 계산
+    correct = 0
+    total = 0
+    predicted_labels = []
+    true_labels = []
 
-accuracy = 100 * correct / total
-precision = precision_score(true_labels, predicted_labels, average='macro')
-recall = recall_score(true_labels, predicted_labels, average='macro')
-f1 = f1_score(true_labels, predicted_labels, average='macro')
+    for data in testloader:
+        images, labels = data
+        images = images.view(images.size(0), -1).numpy()
+        predicted = model.predict(images)
+        total += labels.size(0)
+        correct += np.sum(predicted == labels.numpy())
+        predicted_labels.extend(predicted)
+        true_labels.extend(labels.numpy())
 
-# 결과 기록
-print('Test Accuracy: %.3f' % accuracy)
-print('Test Precision: %.3f' % precision)
-print('Test Recall: %.3f' % recall)
-print('Test F1-Score: %.3f' % f1)
+    accuracy = 100 * correct / total
+    precision = precision_score(true_labels, predicted_labels, average='macro')
+    recall = recall_score(true_labels, predicted_labels, average='macro')
+    f1 = f1_score(true_labels, predicted_labels, average='macro')
 
-# W&B에 결과 기록
-wandb.log({'test/acc': accuracy, 'test/precision': precision, 'test/recall': recall, 'test/f1': f1})
-wandb.finish()
+    # 결과 기록
+    print('Test Accuracy: %.3f' % accuracy)
+    print('Test Precision: %.3f' % precision)
+    print('Test Recall: %.3f' % recall)
+    print('Test F1-Score: %.3f' % f1)
+
+    # W&B에 결과 기록
+    wandb.log({'test/acc': accuracy, 'test/precision': precision, 'test/recall': recall, 'test/f1': f1})
+    wandb.finish()
+
+
+if __name__ == '__main__':
+    main()
