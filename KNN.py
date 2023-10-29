@@ -1,51 +1,46 @@
-import numpy as np
-import pandas as pd
-from sklearn.datasets import load_iris
-from sklearn.model_selection import train_test_split
-from cuml.neighbors import KNeighborsClassifier  # Import GPU-accelerated KNeighborsClassifier from cuml
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 import pickle
+from sklearn.datasets import fetch_openml
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_curve, roc_auc_score
+from sklearn.neighbors import KNeighborsClassifier
 
 
 def main():
-    # Load the Iris dataset
-    iris = load_iris()
-    X = iris.data
-    y = iris.target
+    # Load the MNIST dataset
+    mnist = fetch_openml("mnist_784")
+    X, y = mnist.data, mnist.target
+
+    # Convert labels to binary (0 or 1)
+    y = [1 if label == '1' else 0 for label in y]
 
     # Split the data into training and testing sets
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    # Convert data to NumPy arrays (required by cuml)
-    X_train = np.array(X_train)
-    X_test = np.array(X_test)
-    y_train = np.array(y_train)
-    y_test = np.array(y_test)
-
-    # Train the GPU-accelerated K-Nearest Neighbors classifier
-    model = KNeighborsClassifier(n_neighbors=3)  # You can change the number of neighbors as needed
+    # Create and train the KNN model
+    model = KNeighborsClassifier(n_neighbors=5)  # You can adjust n_neighbors as needed
     model.fit(X_train, y_train)
 
-    # Save the model using pickle
+    # Make predictions on the test data
+    y_pred = model.predict(X_test)
+
+    # Calculate metrics
+    accuracy = accuracy_score(y_test, y_pred)
+    precision = precision_score(y_test, y_pred)
+    recall = recall_score(y_test, y_pred)
+    f1 = f1_score(y_test, y_pred)
+
+    print("K-Nearest Neighbors (KNN) Metrics:")
+    print(f"Accuracy: {accuracy:.3f}")
+    print(f"Precision: {precision:.3f}")
+    print(f"Recall: {recall:.3f}")
+    print(f"F1-score: {f1:.3f}")
+
+    # Save the model and test data using Pickle
     with open('knn_model.pkl', 'wb') as model_file:
         pickle.dump(model, model_file)
 
-    # Save the test data for later use
-    with open('test_data.pkl', 'wb') as test_data_file:
+    with open('test_data_knn.pkl', 'wb') as test_data_file:
         pickle.dump((X_test, y_test), test_data_file)
-
-    # Make Predictions and Evaluate the Model
-    y_pred = model.predict(X_test)
-
-    accuracy = accuracy_score(y_test, y_pred)
-    precision = precision_score(y_test, y_pred, average='micro')
-    recall = recall_score(y_test, y_pred, average='micro')
-    f1 = f1_score(y_test, y_pred, average='micro')
-
-    print("Accuracy:", accuracy)
-    print("Precision:", precision)
-    print("Recall:", recall)
-    print("F1-score:", f1)
 
 
 if __name__ == '__main__':
