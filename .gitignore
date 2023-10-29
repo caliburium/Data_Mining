@@ -204,3 +204,11 @@
 /wandb/run-20231029_160412-g5fsl4po/files/wandb-summary.json
 /wandb/run-20231029_160457-lu9r9oj6/files/wandb-summary.json
 /wandb/run-20231029_160626-6y35p442/files/wandb-summary.json
+/pickle/decision_tree_model.pkl
+/pickle/knn_model.pkl
+/pickle/logistic_regression_model.pkl
+/pickle/svm_model.pkl
+/pickle/test_data_decision_tree.pkl
+/pickle/test_data_knn.pkl
+/pickle/test_data_logistic_regression.pkl
+/pickle/test_data_svm.pkl
